@@ -1,125 +1,40 @@
-<!DOCTYPE html>
+ <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>The World Pixel Square</title>
+    <!-- Supabase Client Setup -->
+    <script src="https://jsdelivr.net"></script>
     <style>
-        /* डार्क थीम और बिना इंटरनेट के चलने वाला स्टाइल */
         body {
-            background-color: #030712;
-            color: #ffffff;
-            font-family: sans-serif;
-            margin: 0;
-            padding: 0;
-            display: flex;
-            flex-direction: column;
-            min-height: 100vh;
-            justify-content: space-between;
+            background-color: #030712; color: #ffffff; font-family: sans-serif;
+            margin: 0; padding: 0; display: flex; flex-direction: column; min-height: 100vh;
         }
-        header {
-            background-color: #111827;
-            padding: 15px;
-            text-align: center;
-            border-bottom: 1px solid #1f2937;
-        }
-        h1 {
-            color: #22d3ee;
-            margin: 0;
-            font-size: 20px;
-            letter-spacing: 1px;
-        }
-        header p {
-            color: #9ca3af;
-            font-size: 11px;
-            margin: 5px 0 0 0;
-        }
-        main {
-            flex-grow: 1;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
-        }
+        header { background-color: #111827; padding: 15px; text-align: center; border-bottom: 1px solid #1f2937; }
+        h1 { color: #22d3ee; margin: 0; font-size: 20px; }
+        header p { color: #9ca3af; font-size: 11px; margin: 5px 0 0 0; }
+        main { flex-grow: 1; display: flex; align-items: center; justify-content: center; padding: 20px; }
         .grid-container {
-            display: grid;
-            grid-template-columns: repeat(20, 16px);
-            grid-gap: 3px;
-            background-color: #111827;
-            padding: 10px;
-            border-radius: 12px;
-            border: 1px solid #1f2937;
+            display: grid; grid-template-columns: repeat(20, 16px); grid-gap: 3px;
+            background-color: #111827; padding: 10px; border-radius: 12px; border: 1px solid #1f2937;
         }
-        .pixel {
-            width: 16px;
-            height: 16px;
-            background-color: #374151;
-            border-radius: 2px;
-            cursor: pointer;
-        }
-        .pixel:hover {
-            background-color: #22d3ee;
-        }
-        /* बुक किए हुए पिक्सल्स के रंग */
-        .claimed-1 { background-color: #10b981; }
-        .claimed-2 { background-color: #8b5cf6; }
-        
-        /* पॉपअप बॉक्स (Modal) */
+        .pixel { width: 16px; height: 16px; background-color: #374151; border-radius: 2px; cursor: pointer; }
+        .pixel.claimed { background-color: #10b981; }
         .modal {
-            position: fixed;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background-color: rgba(0,0,0,0.8);
-            display: none;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
+            position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+            background-color: rgba(0,0,0,0.8); display: none; align-items: center; justify-content: center; padding: 20px;
         }
         .modal-content {
-            background-color: #111827;
-            border: 1px solid #1f2937;
-            border-radius: 16px;
-            padding: 20px;
-            width: 100%;
-            max-width: 280px;
-            text-align: center;
-            position: relative;
+            background-color: #111827; border: 1px solid #1f2937; border-radius: 16px;
+            padding: 20px; width: 100%; max-width: 300px; text-align: center; position: relative;
         }
-        .close-btn {
-            position: absolute;
-            top: 10px; right: 15px;
-            background: none; border: none;
-            color: #9ca3af; font-size: 20px; cursor: pointer;
-        }
-        .pixel-id {
-            font-size: 11px; color: #22d3ee;
-            background-color: #083344;
-            padding: 2px 6px; border-radius: 4px;
-        }
-        .avatar {
-            width: 60px; height: 60px;
-            background-color: #1f2937;
-            border-radius: 50%;
-            margin: 15px auto;
-            display: flex; align-items: center; justify-content: center;
-            font-size: 24px;
-        }
-        .chat-btn {
-            width: 100%;
-            background-color: #0891b2;
-            color: white; border: none;
-            padding: 10px; border-radius: 8px;
-            font-weight: bold; cursor: pointer;
-            margin-top: 10px;
-        }
-        footer {
-            background-color: #111827;
-            padding: 10px;
-            font-size: 11px;
-            color: #6b7280;
-            display: flex;
-            justify-content: space-around;
-            border-t: 1px solid #1f2937;
-        }
+        .close-btn { position: absolute; top: 10px; right: 15px; background: none; border: none; color: #9ca3af; font-size: 20px; }
+        .chat-box { height: 120px; overflow-y: auto; background: #030712; padding: 5px; text-align: left; margin: 10px 0; border-radius: 6px; font-size: 12px; }
+        .input-field { width: 90%; padding: 8px; margin: 5px 0; border-radius: 6px; border: 1px solid #374151; background: #1f2937; color: white; }
+        .btn { width: 100%; color: white; border: none; padding: 10px; border-radius: 8px; font-weight: bold; cursor: pointer; margin-top: 5px; }
+        .pay-btn { background-color: #10b981; }
+        .chat-btn { background-color: #0891b2; }
     </style>
 </head>
 <body>
@@ -130,50 +45,122 @@
     </header>
 
     <main>
-        <div class="grid-container" id="grid">
-            <!-- पिक्सल्स यहाँ जावास्क्रिप्ट से बनेंगे -->
-        </div>
+        <div class="grid-container" id="grid"></div>
     </main>
 
+    <!-- Interactive Modal -->
     <div id="pixelModal" class="modal">
         <div class="modal-content">
             <button class="close-btn" onclick="closeModal()">&times;</button>
-            <span id="modalPixelId" class="pixel-id">Pixel #0</span>
-            <div class="avatar">👤</div>
-            <h3 style="margin: 10px 0 5px 0;">John Doe 🇺🇸</h3>
-            <p style="font-size: 12px; color: #9ca3af; font-style: italic; margin: 0 0 15px 0;">"Building the future! Say hi!"</p>
-            <button class="chat-btn" onclick="alert('चैट फीचर डेटाबेस जोड़ने के बाद चालू होगा!')">💬 Say Hi / Chat</button>
+            <h3 id="modalTitle">Pixel Details</h3>
+            
+            <!-- Setup Form for Empty Pixel -->
+            <div id="claimForm" style="display:none;">
+                <p style="color:#eab308; font-size:12px;">This pixel is empty! Claim it for ₹1</p>
+                <input type="text" id="userName" class="input-field" placeholder="Your Name">
+                <input type="text" id="userCountry" class="input-field" placeholder="Your Country (e.g. 🇮🇳)">
+                <input type="text" id="userMsg" class="input-field" placeholder="Short Bio / Message">
+                <button class="btn pay-btn" onclick="payAndClaim()">💳 Pay ₹1 via UPI & Claim</button>
+            </div>
+
+            <!-- Chat & Profile Room for Claimed Pixel -->
+            <div id="activeProfile" style="display:none;">
+                <h4 id="ownerName" style="margin:5px 0;"></h4>
+                <p id="ownerMsg" style="font-size:12px; color:#9ca3af; italic;"></p>
+                <div class="chat-box" id="chatBox"></div>
+                <input type="text" id="chatInput" style="width:70%; padding:6px; background:#1f2937; color:white; border:none; border-radius:4px;" placeholder="Type a message...">
+                <button onclick="sendChatMessage()" style="width:23%; padding:6px; background:#0891b2; border:none; color:white; border-radius:4px;">Send</button>
+            </div>
         </div>
     </div>
 
-    <footer>
-        <div>Total: 400</div>
-        <div style="color: #10b981;">Claimed: 58</div>
-        <div style="color: #22d3ee;">Live: 14</div>
-    </footer>
-
     <script>
-        const grid = document.getElementById('grid');
-        for (let i = 1; i <= 400; i++) {
-            const pixel = document.createElement('div');
-            pixel.className = 'pixel';
+        // Connecting your live Database Keys
+        const supabaseUrl = 'https://supabase.co';
+        const supabaseKey = 'sb_publishable_jRuR3VLvYeNK0ck7i59N/v9N6fTstE/L20rU3G3mE50='; 
+        const _supabase = supabase.createClient(supabaseUrl, supabaseKey);
+
+        let currentPixelId = null;
+        let claimedPixels = {};
+
+        async function loadGrid() {
+            const grid = document.getElementById('grid');
+            grid.innerHTML = '';
             
-            // कुछ पिक्सल्स को पहले से भरा हुआ दिखाने के लिए
-            if (i % 7 === 0) pixel.classList.add('claimed-1');
-            else if (i % 13 === 0) pixel.classList.add('claimed-2');
-            
-            pixel.onclick = () => openModal(i);
-            grid.appendChild(pixel);
+            const { data, error } = await _supabase.from('pixels').select('*');
+            if(data) {
+                data.forEach(p => { claimedPixels[p.id] = p; });
+            }
+
+            for (let i = 1; i <= 400; i++) {
+                const pixel = document.createElement('div');
+                pixel.className = 'pixel' + (claimedPixels[i] ? ' claimed' : '');
+                pixel.onclick = () => openModal(i);
+                grid.appendChild(pixel);
+            }
         }
 
         function openModal(id) {
-            document.getElementById('modalPixelId').innerText = `Pixel #${id}`;
+            currentPixelId = id;
             document.getElementById('pixelModal').style.display = 'flex';
+            document.getElementById('modalTitle').innerText = `Pixel #${id}`;
+            
+            if (claimedPixels[id]) {
+                document.getElementById('claimForm').style.display = 'none';
+                document.getElementById('activeProfile').style.display = 'block';
+                document.getElementById('ownerName').innerText = `${claimedPixels[id].name} ${claimedPixels[id].country}`;
+                document.getElementById('ownerMsg').innerText = `"${claimedPixels[id].message}"`;
+                loadChats(id);
+            } else {
+                document.getElementById('claimForm').style.display = 'block';
+                document.getElementById('activeProfile').style.display = 'none';
+            }
         }
 
-        function closeModal() {
-            document.getElementById('pixelModal').style.display = 'none';
+        async function payAndClaim() {
+            const name = document.getElementById('userName').value;
+            const country = document.getElementById('userCountry').value || '🌐';
+            const msg = document.getElementById('userMsg').value;
+
+            if(!name) return alert('Please enter your name!');
+
+            // Payment Link Trigger (UPI ID testing link)
+            const upiUrl = `upi://pay?pa=your-upi-id@upi&pn=WorldPixel&am=1.00&cu=INR&tn=Pixel-${currentPixelId}`;
+            window.location.href = upiUrl; 
+
+            // Saving to database
+            const { error } = await _supabase.from('pixels').insert([{ id: currentPixelId, name: name, country: country, message: msg }]);
+            if(!error) {
+                alert('Payment Success! Pixel Claimed.');
+                closeModal();
+                loadGrid();
+            } else {
+                alert('Error or Already Claimed!');
+            }
         }
+
+        async function loadChats(pixelId) {
+            const box = document.getElementById('chatBox');
+            box.innerHTML = 'Loading chats...';
+            const { data } = await _supabase.from('chats').select('*').eq('pixel_id', pixelId).order('created_at', { ascending: true });
+            box.innerHTML = '';
+            if(data) {
+                data.forEach(c => {
+                    box.innerHTML += `<div><strong>${c.sender_name}:</strong> ${c.message}</div>`;
+                });
+            }
+        }
+
+        async function sendChatMessage() {
+            const text = document.getElementById('chatInput').value;
+            if(!text) return;
+            await _supabase.from('chats').insert([{ pixel_id: currentPixelId, sender_name: 'Visitor', message: text }]);
+            document.getElementById('chatInput').value = '';
+            loadChats(currentPixelId);
+        }
+
+        function closeModal() { document.getElementById('pixelModal').style.display = 'none'; }
+        window.onload = loadGrid;
     </script>
 </body>
-</html>       </html>
+</html>
